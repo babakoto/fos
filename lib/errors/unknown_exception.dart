@@ -1,4 +1,4 @@
-import 'package:fos/failure.dart';
+import 'package:fos/fos.dart';
 
 class UnknownException implements Exception {
   final String? message;

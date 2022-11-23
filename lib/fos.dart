@@ -1,6 +1,11 @@
 library fos;
 
-import 'package:fos/failure.dart';
+import 'package:equatable/equatable.dart';
+
+export './errors/network_exception.dart';
+export './errors/server_exception.dart';
+export './errors/unauthorized_exception.dart';
+export './errors/unknown_exception.dart';
 
 /// FOS = Failure or Success
 abstract class Fos<F extends Failure, S> {
@@ -73,4 +78,17 @@ class SuccessResponse<F extends Failure, S> extends Fos<F, S> {
   @override
   bool operator ==(Object other) =>
       other is SuccessResponse && other._success == _success;
+}
+
+abstract class Failure extends Equatable {
+  final String? message;
+  final int? code;
+
+  const Failure({
+    this.message,
+    this.code,
+  });
+
+  @override
+  List<Object?> get props => [message, code];
 }

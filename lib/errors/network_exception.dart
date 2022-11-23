@@ -1,4 +1,4 @@
-import 'package:fos/failure.dart';
+import 'package:fos/fos.dart';
 
 class NetworkException implements Exception {
   final String? message;
