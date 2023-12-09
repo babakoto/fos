@@ -4,7 +4,8 @@
 * Add `NetworkConnetionException` => `NetworkConnetionFailure`
 * Add `WrongPasswordException ` => `WrongPasswordFailure`
 * Add `EmailAlreadyExistException ` => `EmailAlreadyExistFailure`
-* Add utils `exceptionToFailure` 
+* Add extension `toFailure` on Exception 
+* Add setMapExceptions(Map<Type, Failure> map) to FailureHandler 
 
 ## 0.0.2
 

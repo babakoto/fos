@@ -3,16 +3,16 @@ import 'package:fos/fos.dart';
 extension ExceptionToFailure on Exception {
   FailureResponse<Failure, dynamic> toFailure() {
     return FailureResponse(
-      mapExceptions[runtimeType] ?? UnknownFailure(message: "$this"),
+      _mapExceptions[runtimeType] ?? UnknownFailure(message: "$this"),
     );
   }
 }
 
 void setMapExceptions(Map<Type, Failure> map) {
-  mapExceptions.addAll(map);
+  _mapExceptions.addAll(map);
 }
 
-const Map<Type, Failure> mapExceptions = {
+const Map<Type, Failure> _mapExceptions = {
   ServerException: ServerFailure(),
   NetworkConnectionException: NetworkConnectionFailure(),
   UnauthorizedException: UnauthorizedFailure(),
