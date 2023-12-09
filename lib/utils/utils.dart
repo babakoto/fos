@@ -1,15 +1,26 @@
 import 'package:fos/fos.dart';
 
-Fos<Failure, T> exceptionToFailure<T>(e, {StackTrace? trace}) => switch (e) {
-      ServerException() => FailureResponse(ServerFailure(message: e.message)),
-      NetworkConnectionException() => FailureResponse(NetworkConnectionFailure(message: e.message)),
-      UnauthorizedException() => FailureResponse(UnauthorizedFailure(message: e.message)),
-      SerializationException() => FailureResponse(SerializationFailure(message: e.message)),
-      EmailAlreadyExistException() => FailureResponse(EmailAlreadyExistFailure(message: e.message)),
-      WrongPasswordException() => FailureResponse(WrongPasswordFailure(message: e.message)),
-      _ => FailureResponse(
-          UnknownFailure(
-            message: "$e",
-          ),
-        ),
-    };
+extension ExceptionToFailure on Exception {
+  FailureResponse<Failure, dynamic> toFailure() {
+    return FailureResponse(
+      mapExceptions[runtimeType] ?? UnknownFailure(message: "$this"),
+    );
+  }
+}
+
+void setMapExceptions(Map<Type, Failure> map) {
+  mapExceptions.addAll(map);
+}
+
+const Map<Type, Failure> mapExceptions = {
+  ServerException: ServerFailure(),
+  NetworkConnectionException: NetworkConnectionFailure(),
+  UnauthorizedException: UnauthorizedFailure(),
+  SerializationException: SerializationFailure(),
+  EmailAlreadyExistException: EmailAlreadyExistFailure(),
+  WrongPasswordException: WrongPasswordFailure(),
+};
+
+Fos<Failure, T> exceptionToFailure<T>(dynamic e, {StackTrace? trace}) {
+  return e.toFailure();
+}
