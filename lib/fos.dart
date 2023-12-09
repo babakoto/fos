@@ -2,13 +2,11 @@ library fos;
 
 import 'package:equatable/equatable.dart';
 
-export './errors/network_exception.dart';
-export './errors/server_exception.dart';
-export './errors/unauthorized_exception.dart';
-export './errors/unknown_exception.dart';
+export 'package:fos/errors/exceptions.dart';
+export 'package:fos/errors/failures.dart';
 
 /// FOS = Failure or Success
-abstract class Fos<F extends Failure, S> {
+sealed class Fos<F extends Failure, S> {
   const Fos();
 
   bool get isError;
@@ -19,7 +17,6 @@ abstract class Fos<F extends Failure, S> {
     Result Function(F failure) onFailure,
     Result Function(S success) onSuccess,
   );
-
   dynamic get get;
 }
 
@@ -49,8 +46,7 @@ class FailureResponse<F extends Failure, S> extends Fos<F, S> {
   int get hashCode => _failure.hashCode;
 
   @override
-  bool operator ==(Object other) =>
-      other is FailureResponse && other._failure == _failure;
+  bool operator ==(Object other) => other is FailureResponse && other._failure == _failure;
 }
 
 class SuccessResponse<F extends Failure, S> extends Fos<F, S> {
@@ -76,8 +72,7 @@ class SuccessResponse<F extends Failure, S> extends Fos<F, S> {
   int get hashCode => _success.hashCode;
 
   @override
-  bool operator ==(Object other) =>
-      other is SuccessResponse && other._success == _success;
+  bool operator ==(Object other) => other is SuccessResponse && other._success == _success;
 }
 
 abstract class Failure extends Equatable {
