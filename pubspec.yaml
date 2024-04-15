@@ -1,6 +1,6 @@
 name: fos
 description: handling error
-version: 0.0.4
+version: 0.0.5
 homepage: https://github.com/babakoto/fos.git
 
 environment:
