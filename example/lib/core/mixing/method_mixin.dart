@@ -17,10 +17,11 @@ mixin Get<T> {
       throw const SerializationException();
     } on DioException catch (e) {
       final code = e.response?.statusCode;
+      final message = e.response?.statusMessage;
       if (code == 401 || code == 403) {
         throw const UnauthorizedException();
       } else if (code == 500) {
-        throw const ServerException();
+        throw ServerException(error: code, message: message);
       } else {
         if (e.type == DioExceptionType.connectionError) {
           throw const NetworkConnectionException();

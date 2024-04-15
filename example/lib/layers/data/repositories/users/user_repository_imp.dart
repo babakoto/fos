@@ -26,7 +26,7 @@ class FindUsersImp implements FindUsers {
 class FindOneUserImp implements Repository<UserEntity, String> {
   final Find<UserEntity, String> oneUsers;
 
-  FindOneUserImp(this.oneUsers);
+  const FindOneUserImp(this.oneUsers);
 
   @override
   Success<UserEntity> call({String? params}) async {

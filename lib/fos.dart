@@ -15,7 +15,15 @@ typedef Success<R> = Future<Fos<Failure, R>>;
 
 abstract class Fos<F extends Failure, S> {
   static Map<Object, Failure> get errors => _errors;
+
+  /// Initialize errors and uses your custom errors.
   static initErrors(Map<Object, Failure> errors) => _errors = errors;
+
+  /// Add errors to the existing errors.
+  static addErrors(Map<Object, Failure> errors) {
+    _errors.addAll(errors);
+  }
+
   static Map<Object, Failure> _errors = {
     const FormatException(): const SerializationFailure(),
     const EmailAlreadyExistException(): const EmailAlreadyExistFailure(),
@@ -28,16 +36,44 @@ abstract class Fos<F extends Failure, S> {
   };
   const Fos();
 
+  /// When you want to return failure use this method
+  /// [failure] is the failure object
+  /// example:
+  /// try {
+  ///
+  ///  } on NetworkConnectionException catch (e) {
+  ///    return Fos.failure(NetworkConnectionFailure());
+  ///  }on ServerException catch (e) {
+  ///  return Fos.failure(ServerFailure());
+  ///  } catch (e) {
+  ///   return Fos.toFailure(UnknownFailure());
+  ///  }
   factory Fos.failure(F failure) => _Failure(failure);
 
+  /// use this method to return success
+  /// [success] is the success object
+  /// example:
+  /// try {
+  ///  final user = await findUsers("$params");
+  ///  return Fos.success(user);
+  ///  }
   factory Fos.success(S success) => _Success(success);
 
+  /// use this method to convert exception to failure
+  /// example:
+  /// try {
+  ///  final user = await findUsers("$params");
+  ///  return Fos.success(user);
+  ///  } catch (e) {
+  ///  return Fos.toFailure(e);
+  ///  }
   static Future<Fos<Failure, R>> toFailure<R>(Object exception) async {
     final failure = errors.entries.firstWhere((element) => element.key == exception).value;
     return Fos.failure(failure);
   }
 
-  bool get isError;
+  ///  when you want verify if the result is failure
+  bool get isFailure;
 
   bool get isSuccess;
 
@@ -57,7 +93,7 @@ class _Failure<F extends Failure, S> extends Fos<F, S> {
   get get => _failure;
 
   @override
-  bool get isError => true;
+  bool get isFailure => true;
 
   @override
   bool get isSuccess => false;
@@ -86,7 +122,7 @@ class _Success<F extends Failure, S> extends Fos<F, S> {
   get get => _success;
 
   @override
-  bool get isError => false;
+  bool get isFailure => false;
 
   @override
   bool get isSuccess => true;

@@ -52,5 +52,6 @@ class EmailAlreadyExistFailure extends Failure {
 class WrongPasswordFailure extends Failure {
   const WrongPasswordFailure({
     super.message,
+    super.code,
   });
 }

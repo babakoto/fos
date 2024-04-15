@@ -1,70 +1,105 @@
-## Fos ( Failure or Success)
+# FOS (Failure or Success) - Dart Package
 
-###  Services
+FOS is a Dart package designed to help you handle errors and successes in your applications in a structured and manageable way. It provides a mechanism for encapsulating both failures and successes, making error handling cleaner and more consistent across your codebase.
 
-       class UserService {
-		     Future<AppUser> getCurrentUser() async {  
-		          try {  
-		            final response = await dio.get("/users");  
-		            return AppUser.fromJson(response.data);  
-		          } on DioError catch (e) {  
-		            switch (e.response?.statusCode) {  
-		              case 500:  
-		                throw const ServerException();  
-		               case 401:
-		               case 403:
-		                throw const UnauthorizedException();  
-		              default:  
-		                 throw const UnknownException(message: "$e");  
-		          }  
-		          } catch (e) {  
-		            rethrow;  
-		          }  
-		    }   
+
+## Features
+
+-   ** ✅ Structured Error Handling**: FOS provides a structured way to handle errors and successes, making your code more readable and maintainable.
+-   ** ✅ Custom Error Handling**: You can define custom error types and map them to specific exceptions or error conditions in your application.
+-   ** ✅ Consistent API**: FOS ensures a consistent API for handling both failures and successes, simplifying error management across your codebase.
+
+## Usage
+
+### Handling Failures
+
+To return a failure, use the `Fos.failure(MyFailure())` factory method:
+
+    Success<UserEntity> findUser({String? params}) async {  
+       try {  
+         final user = await someFunction();
+         return Fos.success(user);  
+       }  on SerializationException {  
+		 return Fos.failure(SerializationFailure(message:"xxxx"));  
+       } on ServerException {
+         return Fos.failure(ServerFailure(message: "xxxx",code: 500));  
+       }
+    }
+### Handling Successes
+
+To return a success, use the `Fos.success(MyObject)` factory method:
+
+    try {
+      final user = await someFunction();
+      return Fos.success(user);
+    } catch (e) {
+      return Fos.toFailure(e);
     }
 
+### Checking Result Status
 
-###  Repositories
+You can check whether the result is a failure or success using the `isFailure` and `isSuccess` properties:
 
-    Future<Fos<Failure,AppUser>> getCurrentUser()async{ 
-		  try{
-		    final appUser = await this.userService.getCurrentUser();
-		    return SuccessResponse(appUser);
-		    
-		  }on ServerException catch(e){
-			  return FailureResponse(ServerFailure(message:e.message,code:e.code));
-			  
-		  }on NetworkException catch(e){
-		 	return FailureResponse(NetworkFailure(message:e.message));
-		 	
-		  }on UnauthorizedException catch(e){
-		    return FailureResponse(UnauthorizedFailure(message:e.message,code:e.code));
-		  }
+    final result = await someFunction();
+    if (result.isFailure) {
+      // Handle failure
+    } else {
+      // Handle success
     }
 
-### State manager
+### Handling Results
 
-#### BLOC :
+You can handle both failure and success using the `on` method:
+
+    final result = await someFunction();
+    result.on(
+      (failure) {
+        // Handle failure
+      },
+      (success) {
+        // Handle success
+      },
+    );
+
+## Custom Errors
+
+You can define custom error types by extending the `Failure` , `Exceptions` class and providing your own implementation:
+
+**custom exception**
+
+     class MyCustomException extends Exceptions {  
+    	  const ServerException({  
+    	     super.message,  
+    		 super.error,  
+    	  });  
+     }
 
 
+** custom failure**
+
+      class MyCustomFailure extends Failure {  
+    	      const MyCustomFailure({  
+    		        super.message,  
+    		        super.code,  
+    	       });  
+      }
 
 
-    FutureOr<void> _onGetCurrentUser(  
-        OnGetCurrentUser event, Emitter<AuthState> emit) async {  
-          emit(state.copyWith(status: AuthStatus.loading));  
-          final result = await getCurrentUserUseCase();  
-	      result.on(  
-	        (failure) { 
-	            emit(state.copyWith(status: AuthStatus.failure, currentUser: null));  
-	        },  
-	        (success) {  
-	          emit(  
-	            state.copyWith(  
-	              status: AuthStatus.authorized,
-	              currentUser: success
-	              )
-	           );  
-	       },  
-	     );  
+## Initialization
+
+Before using FOS, you can initialize custom errors using the `initErrors` method:
+
+dartCopy code
+
+    `Fos.initErrors({
+      Custom1Exception(): Custom1Failure(),
+      Custom2Exception(): Custom2Failure(),
+    });`
+
+or
+Add errors to the existing errors.
+
+    static addErrors(Map<Object, Failure> errors) {  
+      _errors.addAll({Custom2Exception(): Custom2Failure()});  
     }
 
