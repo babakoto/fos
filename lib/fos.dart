@@ -1,13 +1,41 @@
 library fos;
 
 import 'package:equatable/equatable.dart';
+import 'package:fos/errors/exceptions.dart';
+import 'package:fos/errors/failures.dart';
 
 export 'package:fos/errors/exceptions.dart';
 export 'package:fos/errors/failures.dart';
+export 'package:fos/fos.dart';
+export 'package:fos/utils/utils.dart';
 
 /// FOS = Failure or Success
-sealed class Fos<F extends Failure, S> {
+
+typedef Success<R> = Future<Fos<Failure, R>>;
+
+abstract class Fos<F extends Failure, S> {
+  static Map<Object, Failure> get errors => _errors;
+  static initErrors(Map<Object, Failure> errors) => _errors = errors;
+  static Map<Object, Failure> _errors = {
+    const FormatException(): const SerializationFailure(),
+    const EmailAlreadyExistException(): const EmailAlreadyExistFailure(),
+    const WrongPasswordException(): const WrongPasswordFailure(),
+    const NetworkConnectionException(): const NetworkConnectionFailure(),
+    const UnauthorizedException(): const UnauthorizedFailure(),
+    const ServerException(): const ServerFailure(),
+    const SerializationException(): const SerializationFailure(),
+    const UnknownException(): const UnknownFailure(),
+  };
   const Fos();
+
+  factory Fos.failure(F failure) => _Failure(failure);
+
+  factory Fos.success(S success) => _Success(success);
+
+  static Future<Fos<Failure, R>> toFailure<R>(Object exception) async {
+    final failure = errors.entries.firstWhere((element) => element.key == exception).value;
+    return Fos.failure(failure);
+  }
 
   bool get isError;
 
@@ -20,10 +48,10 @@ sealed class Fos<F extends Failure, S> {
   dynamic get get;
 }
 
-class FailureResponse<F extends Failure, S> extends Fos<F, S> {
+class _Failure<F extends Failure, S> extends Fos<F, S> {
   final F _failure;
 
-  const FailureResponse(this._failure);
+  const _Failure(this._failure);
 
   @override
   get get => _failure;
@@ -46,13 +74,13 @@ class FailureResponse<F extends Failure, S> extends Fos<F, S> {
   int get hashCode => _failure.hashCode;
 
   @override
-  bool operator ==(Object other) => other is FailureResponse && other._failure == _failure;
+  bool operator ==(Object other) => other is _Failure && other._failure == _failure;
 }
 
-class SuccessResponse<F extends Failure, S> extends Fos<F, S> {
+class _Success<F extends Failure, S> extends Fos<F, S> {
   final S _success;
 
-  const SuccessResponse(this._success);
+  const _Success(this._success);
 
   @override
   get get => _success;
@@ -72,7 +100,7 @@ class SuccessResponse<F extends Failure, S> extends Fos<F, S> {
   int get hashCode => _success.hashCode;
 
   @override
-  bool operator ==(Object other) => other is SuccessResponse && other._success == _success;
+  bool operator ==(Object other) => other is _Success && other._success == _success;
 }
 
 abstract class Failure extends Equatable {

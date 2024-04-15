@@ -1,18 +1,29 @@
-class NetworkConnectionException implements Exception {
-  final String? message;
+import 'package:equatable/equatable.dart';
 
-  const NetworkConnectionException({
-    this.message,
-  });
-}
-
-class ServerException implements Exception {
+class Exceptions extends Equatable implements Exception {
   final String? message;
   final int? error;
 
-  const ServerException({
+  const Exceptions({
     this.message,
     this.error,
+  });
+
+  @override
+  List<Object?> get props => [message, error];
+}
+
+class NetworkConnectionException extends Exceptions {
+  const NetworkConnectionException({
+    super.message,
+    super.error,
+  });
+}
+
+class ServerException extends Exceptions {
+  const ServerException({
+    super.message,
+    super.error,
   });
 }
 
@@ -24,44 +35,36 @@ class ServerException implements Exception {
 ///  } catch (e) {
 ///  throw UnknownException(message: e.toString());
 ///  }
-class UnknownException implements Exception {
-  final String? message;
-
+class UnknownException extends Exceptions {
   const UnknownException({
-    this.message,
+    super.message,
+    super.error,
   });
 }
 
-class UnauthorizedException implements Exception {
-  final String? message;
-  final int? error;
+class UnauthorizedException extends Exceptions {
   const UnauthorizedException({
-    this.message,
-    this.error,
+    super.message,
+    super.error,
   });
 }
 
-class SerializationException implements Exception {
-  final String? message;
+class SerializationException extends Exceptions {
   final StackTrace? track;
 
   const SerializationException({
-    this.message,
+    super.message,
     this.track,
   });
 }
 
-class EmailAlreadyExistException implements Exception {
-  final String message;
-
+class EmailAlreadyExistException extends Exceptions {
   const EmailAlreadyExistException({
-    required this.message,
+    super.message,
+    super.error,
   });
 }
 
-class WrongPasswordException implements Exception {
-  final String message;
-  final String? track;
-
-  const WrongPasswordException({this.message = "ERROR.incorrect-login", this.track});
+class WrongPasswordException extends Exceptions {
+  const WrongPasswordException({super.error, super.message});
 }
