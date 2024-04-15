@@ -36,6 +36,37 @@ To return a success, use the `Fos.success(MyObject)` factory method:
       return Fos.toFailure(e);
     }
 
+
+### Auto converting Exceptions to Failures
+
+You can convert exceptions to failures using the `Fos.toFailure(exception)` method.   
+This method takes an exception as input and returns the corresponding failure if it is mapped in the `errors` . Here's how you can use it:
+
+/// Dont forget to create yours custom exception and Failure
+
+
+     final errors = { 
+              Custom1Exception(): Custom1Failure(),
+              Custom2Exception(): Custom2Failure(),
+            }
+       Fos.initErrors(error);
+
+
+
+*After
+
+
+    try {  
+        final user = await someFunction();
+        return Fos.success(user);
+     } catch (e) {  
+       return Fos.toFailure(e);
+     }
+
+
+
+
+
 ### Checking Result Status
 
 You can check whether the result is a failure or success using the `isFailure` and `isSuccess` properties:
@@ -79,8 +110,8 @@ You can define custom error types by extending the `Failure` , `Exceptions` clas
 
       class MyCustomFailure extends Failure {  
     	      const MyCustomFailure({  
-    		        super.message,  
-    		        super.code,  
+    		     super.message,  
+    		     super.code,  
     	       });  
       }
 
