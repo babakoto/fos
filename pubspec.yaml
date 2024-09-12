@@ -1,6 +1,6 @@
 name: fos
 description: handling error
-version: 0.0.7
+version: 0.0.8
 homepage: https://github.com/babakoto/fos.git
 
 environment:
@@ -55,4 +55,4 @@ flutter:
   # https://flutter.dev/custom-fonts/#from-packages
 screenshots:
   - description: The fos package logo.
-    path: fos.jpeg
+    path: fos.png

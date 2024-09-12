@@ -2,7 +2,7 @@
 
 FOS is a Dart package designed to help you handle errors and successes in your applications in a structured and manageable way. It provides a mechanism for encapsulating both failures and successes, making error handling cleaner and more consistent across your codebase.
 
-<p align="center"> <img src="https://github.com/babakoto/fos/blob/main/fos.jpeg?raw=true" alt="Description de l'image" width="400"/></p>
+<p align="center"> <img src="https://github.com/babakoto/fos/blob/main/fos.png?raw=true" alt="Description de l'image" width="400"/></p>
 
 ## Features
 
